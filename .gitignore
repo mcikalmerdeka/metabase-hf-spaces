@@ -11,3 +11,9 @@ wheels/
 
 # Docs
 docs/
+
+# Opencode
+.sisyphus/
+
+# assets
+assets/
