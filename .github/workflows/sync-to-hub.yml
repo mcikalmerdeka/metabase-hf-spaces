@@ -1,0 +1,38 @@
+name: Sync to Hugging Face Hub
+
+on:
+  push:
+    branches: [main]
+
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Ensure full history is available (recommended for file-mirror actions)
+          fetch-depth: 0
+
+      - name: Sync to Hugging Face Space
+        uses: huggingface/hub-sync@v0.1.0
+        with:
+          github_repo_id: ${{ github.repository }}
+          # Hugging Face Space repository ID
+          # Format: <hf-username>/<space-name>
+          huggingface_repo_id: mcikalmerdeka/metabase-hf-space
+          hf_token: ${{ secrets.HF_TOKEN }}
+          repo_type: space
+          space_sdk: docker
+
+      # -------------------------------------------------------------------
+      # File-size guard
+      # -------------------------------------------------------------------
+      # Hugging Face Spaces rejects individual files > 10 MB unless they are
+      # tracked with Git-LFS. If you later add files > 10 MB, enable Git-LFS
+      # and/or Xet BEFORE pushing to the Space. See:
+      #   https://huggingface.co/docs/hub/spaces-github-actions
+      # -------------------------------------------------------------------
